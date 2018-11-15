@@ -1,0 +1,25 @@
+server:
+  port: 8090
+spring:
+  application:
+    name: proxy-zuul-server
+  cloud:
+      config:
+        uri: http://www.notobject.com:8888         # 配置中心地址
+eureka:
+  instance:
+    prefer-ip-address: true                      # 注册IP （缺省为主机名）
+    lease-renewal-interval-in-seconds: 5       # 心跳时间，即服务续约间隔时间（缺省为30s）
+    lease-expiration-duration-in-seconds: 15   # 发呆时间，即服务续约到期时间（缺省为90s）
+  client:
+    registry-fetch-interval-seconds: 10        # 拉取服务注册信息间隔（缺省为30s）
+    service-url:
+      defaultZone: http://www.notobject.com:8761/eureka/
+# 刷新配置 curl -X POST http://www.notobject.com:8090/actuator/refresh
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+

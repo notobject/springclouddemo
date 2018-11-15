@@ -1,0 +1,12 @@
+version: "3"
+services:
+  product-service:
+    image: product-server-test
+    restart: always
+    ports:
+      - 8082:8082
+  user-service:
+    image: user-server-test
+    restart: always
+    ports:
+      - 8081:8081

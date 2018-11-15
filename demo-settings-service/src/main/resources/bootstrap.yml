@@ -1,0 +1,19 @@
+server:
+  port: 8082
+spring:
+  application:
+    name: demo-settings-service
+  cloud:
+    config:
+      uri: http://www.notobject.com:8888
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://www.notobject.com:8761/eureka/
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
