@@ -1,5 +1,9 @@
 # Spring Cloud Demo
 
+注册中心： http://www.notobject.com:8761
+微代理： http://www.notobject.com:8090/api/user/getUserInfo/1
+用户服务：http://www.notobject.com:8081/getUserInfo/2
+设置服务：http://www.notobject.com:8081/getSettings/1
 
 ## 简单介绍
 
