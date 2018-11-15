@@ -11,7 +11,16 @@
 - Demo微服务: user-service
 - Demo为服务: settings-servcie
 
-## 运行方式
+## 本地运行
+
+1. 将项目导入IDEA
+2. 修改各模块的配置文件中的配置中心地址和服务注册地址为localhost
+3. 新建一个git仓库用作配置中心的存储库，并修改config-server的配置文件中的仓库地址。
+4. 在新建的git仓库中新建所需的配置文件（参考https://github.com/notobject/config-center）
+5. 依次直接运行config-server -> register-server -> proxy-zuul-server -> demo-user-service -> demo-settings-service
+6. 浏览器访问： http://localhost:8090/api/user/getUserInfo/1 
+
+## Docker部署
 
 1. 将项目导入IDEA
 2. 准备一台安装了docker engine 的Linux云服务器或虚拟机。
