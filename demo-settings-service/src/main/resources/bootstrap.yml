@@ -22,8 +22,6 @@ eureka:
     instance-id:  ${spring.application.name}:@ip.address@:${random.uuid}
   client:
     registry-fetch-interval-seconds: 10        # 拉取服务注册信息间隔（缺省为30s）
-    service-url:
-      defaultZone: http://localhost:8761/eureka/,http://120.78.82.47:8761/eureka/, http://122.152.225.84:8761/eureka/
 management:
   endpoints:
     web:
