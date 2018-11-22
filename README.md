@@ -11,6 +11,7 @@
 - Demo微服务: user-service
 - Demo微服务: settings-servcie
 
+
 ## 本地运行
 
 1. 将项目导入IDEA
@@ -37,5 +38,17 @@
 7. 以运行注册中心为例： docker run --name register-center -p 8761:8761 -t image/register-server --restart=always -d
 8. 验证：浏览器访问http://xxx:8761 (xxx为你的服务器地址)
 
+## 我的部署策略
+
+分别准备6台服务器ServerA1，ServerA2, ServerB1,ServerB12， ServerC1，ServerC2， 其中A,B,C表示3个集群:Nginx集群，微服务基础组件集群，微服务系统集群
+
+ServerB1和ServerB2互为对等服务器，注册中心，配置中心以及微代理各都部署一个实例到B1和B2上
+
+ServerA1和ServerA2安装keeplived，并部署Nginx，A1作为Nginx主服务器。A2作为备用服务器。Nginx反向代理对象为B1和B2的proxy-zuul-server地址。
+
+ServerC1和ServerC2部署普通业务微服务。如user-service分别部署一个实例到C1和C2,避免单点故障
+
+
 ## TODO
-对于普通的微服务，在启动时采用了随机端口，但是我现在还没有找到怎么在用docker部署的时候，去映射spring boot的随机端口。如果直接生成jar包执行，则不存在这个问题
+对于普通的微服务，在启动时采用了随机端口，但是我现在还没有找到怎么在用docker部署的时候，去映射spring boot的随机端口。
+如果直接生成jar包执行，则不存在这个问题
