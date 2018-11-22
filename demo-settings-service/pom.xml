@@ -9,6 +9,16 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.0.4.RELEASE</version>
     </parent>
+    <packaging>jar</packaging>
+    <version>1.0.0.RELEASE</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <spring.cloud.version>Finchley.RELEASE</spring.cloud.version>
+    </properties>
+
     <dependencies>
 
         <!-- 配置中心 -->
@@ -37,6 +47,12 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <!-- 消息总线 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bus-amqp</artifactId>
+        </dependency>
+
         <!-- 服务调用（Feign方式）-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -58,17 +74,74 @@
         </dependencies>
     </dependencyManagement>
 
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
+    <profiles>
+        <!-- mvn: 使用 -P指定启动的profile -->
+        <profile>
+            <id>localhost</id>
+            <properties>
+                <profiles.active>localhost</profiles.active>
+                <ip.address>localhost</ip.address>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>server1</id>
+            <properties>
+                <profiles.active>server2</profiles.active>
+                <ip.address>120.78.82.47</ip.address>
+            </properties>
+        </profile>
+        <profile>
+            <id>server2</id>
+            <properties>
+                <profiles.active>server2</profiles.active>
+                <ip.address>122.152.225.84</ip.address>
+            </properties>
+        </profile>
+    </profiles>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <excludes>
+                    <exclude>bootstrap-*.yml</exclude>
+                    <exclude>application-*.yml</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>bootstrap.yml</include>
+                    <include>bootstrap-${profiles.active}.yml</include>
+                    <include>application.yml</include>
+                    <include>application-${profiles.active}.yml</include>
+                </includes>
+            </resource>
+        </resources>
+        <!-- 插件 -->
         <plugins>
+            <!-- Spring Boot项目打包插件 -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <!-- docker 打包镜像插件 -->
+            <!-- 资源文件处理插件 -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <delimiters>
+                        <delimiter>@</delimiter>
+                    </delimiters>
+                    <useDefaultDelimiters>false</useDefaultDelimiters>
+                </configuration>
+            </plugin>
+            <!-- Docker 镜像构建插件 -->
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
@@ -79,6 +152,7 @@
                     <!-- 依赖java镜像 -->
                     <baseImage>java</baseImage>
                     <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
+                    <dockerHost>http://${ip.address}:2375</dockerHost>
                     <resources>
                         <resource>
                             <targetPath>/</targetPath>
@@ -88,7 +162,6 @@
                     </resources>
                 </configuration>
             </plugin>
-            <!-- 插件 -->
         </plugins>
     </build>
 

@@ -24,6 +24,7 @@ public class SettingsController {
 
     @RequestMapping("/getSettings/{uid}")
     public List<SettingsInfo> getSettings(@PathVariable("uid") Long uid) {
+        log.info("Access getSettings from " + uid);
         String userInfo = userInfoService.getUserInfo(uid);
         log.info(userInfo);
 

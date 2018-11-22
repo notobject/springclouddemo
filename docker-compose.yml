@@ -1,12 +1,17 @@
+# -----------------------------------------
+# yum update
+# yum install docker-compose
+# docker-compose up
+# -----------------------------------------
 version: "3"
 services:
-  product-service:
-    image: product-server-test
-    restart: always
-    ports:
-      - 8082:8082
-  user-service:
-    image: user-server-test
+  demo-user-service:
+    image: image/demo-user-service
     restart: always
     ports:
       - 8081:8081
+  demo-settings-service:
+    image: image/demo-settings-service
+    restart: always
+    ports:
+      - 8082:8082

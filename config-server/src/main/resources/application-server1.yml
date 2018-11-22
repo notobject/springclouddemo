@@ -1,0 +1,10 @@
+spring:
+  rabbitmq:
+    host: 120.78.82.47
+    port: 5672
+    username: test
+    password: test
+eureka:
+  client:
+    service-url:
+      defaultZone: http://120.78.82.47:8761/eureka/,http://122.152.225.84:8761/eureka/

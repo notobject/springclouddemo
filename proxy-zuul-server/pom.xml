@@ -3,37 +3,52 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>proxy-zuul-server</artifactId>
+    <artifactId>proxy-server</artifactId>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.0.4.RELEASE</version>
     </parent>
-
+    <version>1.0.0.RELEASE</version>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <spring.cloud.version>Finchley.RELEASE</spring.cloud.version>
+    </properties>
     <dependencies>
         <!-- Zuul 微服务网关-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-zuul</artifactId>
-            <version>1.4.5.RELEASE</version>
+            <version>1.4.2.RELEASE</version>
         </dependency>
 
+        <!-- 配置中心 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
-            <version>2.0.1.RELEASE</version>
         </dependency>
 
+        <!-- 服务注册 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-            <version>2.0.1.RELEASE</version>
         </dependency>
 
+        <!-- 消息总线 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bus-amqp</artifactId>
+        </dependency>
+
+        <!--Spring Web-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
+        <!-- 应用监控 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -46,24 +61,80 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Finchley.SR1</version>
+                <version>${spring.cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
+    <profiles>
+        <!-- mvn clean package docker:build -P server1   使用 -P指定启动的profile -->
+        <profile>
+            <id>localhost</id>
+            <properties>
+                <profiles.active>localhost</profiles.active>
+                <ip.address>localhost</ip.address>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>server1</id>
+            <properties>
+                <profiles.active>server1</profiles.active>
+                <ip.address>120.78.82.47</ip.address>
+            </properties>
+        </profile>
+        <profile>
+            <id>server2</id>
+            <properties>
+                <profiles.active>server2</profiles.active>
+                <ip.address>122.152.225.84</ip.address>
+            </properties>
+        </profile>
+    </profiles>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <excludes>
+                    <exclude>bootstrap-*.yml</exclude>
+                    <exclude>application-*.yml</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>bootstrap.yml</include>
+                    <include>bootstrap-${profiles.active}.yml</include>
+                    <include>application.yml</include>
+                    <include>application-${profiles.active}.yml</include>
+                </includes>
+            </resource>
+        </resources>
+        <!-- 插件 -->
         <plugins>
+            <!-- Spring Boot项目打包插件 -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <!-- 插件 -->
+            <!-- 资源文件处理插件 -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <delimiters>
+                        <delimiter>@</delimiter>
+                    </delimiters>
+                    <useDefaultDelimiters>false</useDefaultDelimiters>
+                </configuration>
+            </plugin>
+            <!-- Docker 镜像构建插件 -->
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
@@ -74,6 +145,7 @@
                     <!-- 依赖java镜像 -->
                     <baseImage>java</baseImage>
                     <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
+                    <dockerHost>http://${ip.address}:2375</dockerHost>
                     <resources>
                         <resource>
                             <targetPath>/</targetPath>
@@ -83,7 +155,6 @@
                     </resources>
                 </configuration>
             </plugin>
-            <!-- 插件 -->
         </plugins>
     </build>
 

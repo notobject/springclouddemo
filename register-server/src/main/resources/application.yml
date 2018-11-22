@@ -1,0 +1,18 @@
+server:
+  port: 8761
+spring:
+  application:
+    name: register-server
+  profiles:
+    active: @profiles.active@
+eureka:
+  instance:
+    prefer-ip-address: true
+    ip-address: @ip.address@
+    instance-id: ${spring.application.name}:@ip.address@:${server.port}
+  server:
+    enable-self-preservation: false                   # 关闭自我保护模式（默认为打开）
+    eviction-interval-timer-in-ms: 5000               # 续期时间，即扫描失效服务的间隔时间（缺省为60*1000ms）
+  client:
+    register-with-eureka: false
+    fetch-registry: false

@@ -23,7 +23,7 @@ public class UserController {
         ui.setId(uid);
         ui.setName("User-" + uid);
         ui.setAge(new Random(System.currentTimeMillis()).nextInt(100));
-
+        log.info(ui.toString());
         return ui;
     }
 }
