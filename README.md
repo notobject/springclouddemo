@@ -15,7 +15,7 @@
 
 1. 将项目导入IDEA
 2. 依次进入register-server -> config-server -> proxy-zuul-server -> demo-user-service -> demo-settings-servcie 目录
-   执行 mvn clean package -Plocalhost
+   执行 mvn clean spring-boot:run -Plocalhost
 
 ## 生成jar包
 1. 将项目导入IDEA
