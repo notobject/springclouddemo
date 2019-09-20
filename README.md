@@ -48,7 +48,3 @@ ServerA1和ServerA2安装keeplived，并部署Nginx，A1作为Nginx主服务器�
 
 ServerC1和ServerC2部署普通业务微服务。如user-service分别部署一个实例到C1和C2,避免单点故障
 
-
-## TODO
-对于普通的微服务，在启动时采用了随机端口，但是我现在还没有找到怎么在用docker部署的时候，去映射spring boot的随机端口。
-如果直接生成jar包执行，则不存在这个问题
